@@ -1,0 +1,51 @@
+*.pyc
+__pycache__/
+
+# Byte-compiled / optimized / DLL files
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+env/
+venv/
+
+# Environment variables / secrets
+.env
+app_config.py
+
+# PyInstaller
+*.spec
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# Django / Flask / FastAPI stuff
+*.log
+instance/
+.webassets-cache
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# PyCharm
+.idea/
+
+# SQLite (якщо використовуєш)
+*.sqlite3
+
