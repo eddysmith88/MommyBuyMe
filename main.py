@@ -27,6 +27,7 @@ from handlers.show_posts_promo import router as show_posts_promos
 from handlers.super_admin import router as super_admin
 from handlers.reject import router as reject
 from handlers.admin import router as admin
+from handlers.city_change import router as city_change
 
 
 logging.basicConfig(level=logging.INFO)
@@ -40,6 +41,7 @@ main_router.include_router(show_posts_promos)
 main_router.include_router(super_admin)
 main_router.include_router(reject)
 main_router.include_router(admin)
+main_router.include_router(city_change)
 
 
 # Конфігурації ботів

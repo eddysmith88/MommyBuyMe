@@ -52,7 +52,7 @@ async def start_handler(message: Message):
 
         # Визначення міста (для вітання)
         city_name = (admin.city if is_admin else client.city) if not is_superadmin else "всі міста"
-        greeting = f"👋 Привіт {user_name}!\n🧸 Вас вітає 'Мама ну купи' 🧸{city_name}"
+        greeting = f"👋🧚‍♀️ Привіт 🧞‍♂️ {user_name}!\n🧸 Вас вітає 'Мама ну купи' 🧸{city_name}"
 
         if is_superadmin:
             await message.answer_photo(

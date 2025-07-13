@@ -61,12 +61,13 @@ def city_keyboard():
 
 def city_kb():
     return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text=f"💡Про нас", callback_data="about"),
-         InlineKeyboardButton(text="🆕Наші акції та новини", callback_data="news")],
-        [InlineKeyboardButton(text="❔Часті питання", callback_data="faq"),
-         InlineKeyboardButton(text="🗺Найближчі точки", callback_data="nearby")],
-        [InlineKeyboardButton(text="🤝Стати партнером", callback_data="partner"),
-         InlineKeyboardButton(text="🛠Тех. підтримка", callback_data="support")],
+        [InlineKeyboardButton(text=f"💡Про нас 🐻", callback_data="about"),
+         InlineKeyboardButton(text="🆕Наші акції та новини 🦊", callback_data="news")],
+        [InlineKeyboardButton(text="❔Часті питання 🦁", callback_data="faq"),
+         InlineKeyboardButton(text="🗺Найближчі точки 🐼", callback_data="nearby")],
+        [InlineKeyboardButton(text="🤝Стати партнером 😺", callback_data="partner"),
+         InlineKeyboardButton(text="🛠Тех. підтримка 🧞‍♂️", callback_data="support")],
+        [InlineKeyboardButton(text="🌍Змінити місто", callback_data="change_city")],
     ])
 
 
@@ -80,7 +81,7 @@ def super_admin_menu():
         [InlineKeyboardButton(text="📌Створити акцію", callback_data="create_promo_to_city")],
         [InlineKeyboardButton(text="🏢Переглянути новини", callback_data="show_posts_button")],
         [InlineKeyboardButton(text="🏢Переглянути акції", callback_data="show_promo_button")],
-        [InlineKeyboardButton(text="Список наших локацій", callback_data="location_list")],
+        [InlineKeyboardButton(text="🌍Список наших локацій", callback_data="location_list")],
         [InlineKeyboardButton(text="🔄Оновити список клієнтів", callback_data="export_clients")],
         [InlineKeyboardButton(text="🗺Найближчі точки", callback_data="nearby")],
         [InlineKeyboardButton(text="🔙 Назад", callback_data="admin_back")]

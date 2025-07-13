@@ -4,11 +4,11 @@ from aiogram.fsm.context import FSMContext
 from sqlalchemy import select
 from db.models import Admin, Post, Promo, Client
 from db.session import AsyncSessionLocal
-from info import how_to_create, CITIES_LOCATION
+from info import how_to_create, CITIES_LOCATION, VALID_CITIES
 # from services.clients_export import export_clients_to_gsheet
 from states.admin_states import AdminCreation, AdminDeletion
 from filters.is_superadmin import IsSuperAdmin
-from keyboard.keyboards import admin_menu, super_admin_menu, generate_post_action_kb, generate_promo_action_kb, cancel_kb
+from keyboard.keyboards import super_admin_menu, generate_post_action_kb, generate_promo_action_kb, cancel_kb
 from states.superadmin_post_promo_states import CreatePostToCity, CreatePromoToCity, EditPromo, EditPost
 from app_config import BOT_TOKEN
 
@@ -30,13 +30,13 @@ BOTS_CONFIG = [
 router = Router()
 
 # 🔐 Список дозволених супер-адмінів
-SUPER_ADMIN_IDS = [887934499, 6539889022, 498516373, 959706369]
+SUPER_ADMIN_IDS = [887934499, 6539889022]
 
 
-VALID_CITIES = [
-    "Чернівці", "Чернігів", "Івано-Франківськ",
-    "Ужгород", "Запоріжжя", "Київ"
-]
+# VALID_CITIES = [
+#     "Чернівці", "Чернігів", "Івано-Франківськ",
+#     "Ужгород", "Запоріжжя", "Київ"
+# ]
 
 VALID_CITY_MAP = {city.lower().replace("-", "").replace(" ", ""): city for city in VALID_CITIES}
 
@@ -55,20 +55,11 @@ text = ("Що ви можете тут робити:\n"
 async def show_admin_menu(callback: CallbackQuery):
 
     await callback.message.answer_photo(
-        photo="AgACAgIAAxkBAAIBxmhLPRMfqCcblfnKHPN89lhbt_SQAAJJ8jEbcBxISktWMs5bFkgpAQADAgADeQADNgQ",
-        caption=text,
+        photo="https://optim.tildacdn.one/tild6430-3632-4466-a565-393138306265/-/resize/666x/-/format/webp/2_2.png.webp",
+        caption=f"Меню адміністратора \n",
         parse_mode="Markdown",
         reply_markup=super_admin_menu()
     )
-
-    # await callback.message.answer("Що ви можете тут робити:\n"
-    #                               "- створити та видалити адміна;\n"
-    #                               "- оновити список клієнтів в гугл таблиці;\n"
-    #                               "- Створити новину;\n"
-    #                               "- Створити акцію\n"
-    #                               "- Акції видаляються автоматично після закінчення їх терміну,\n"
-    #                               "Новини можна видаляти вручну"
-    #                                reply_markup=admin_menu())
     await callback.answer()
 
 
@@ -119,9 +110,6 @@ async def admin_step1_get_name(message: Message, state: FSMContext):
 
 @router.message(AdminCreation.waiting_for_admin_name, IsSuperAdmin())
 async def admin_step2_save(message: Message, state: FSMContext):
-    # if message.from_user.id not in SUPER_ADMIN_IDS:
-    #     return
-
     data = await state.get_data()
     telegram_id = data.get("telegram_id")
     city = data.get("city")
@@ -151,8 +139,6 @@ async def delete_admin_start(callback: CallbackQuery, state: FSMContext):
 # 🧹 Видалення адміна
 @router.message(AdminDeletion.waiting_for_admin_id, IsSuperAdmin())
 async def delete_admin_confirm(message: Message, state: FSMContext):
-    # if message.from_user.id not in SUPER_ADMIN_IDS:
-    #     return
 
     try:
         telegram_id = int(message.text.strip())
@@ -189,8 +175,6 @@ async def admin_back(callback: CallbackQuery):
 
 @router.callback_query(F.data == "admin_list", IsSuperAdmin())
 async def list_admins(callback: CallbackQuery):
-    # if callback.from_user.id not in SUPER_ADMIN_IDS:
-    #     return await callback.answer("⛔ У вас немає доступу", show_alert=True)
 
     async with AsyncSessionLocal() as session:
         result = await session.execute(select(Admin))
@@ -234,9 +218,6 @@ async def copy_admin_id(callback: CallbackQuery):
 
 @router.callback_query(F.data.startswith("remove_admin:"), IsSuperAdmin())
 async def confirm_admin_removal(callback: CallbackQuery, state: FSMContext):
-    # if callback.from_user.id not in SUPER_ADMIN_IDS:
-    #     return await callback.answer("⛔ Немає доступу", show_alert=True)
-
     telegram_id = int(callback.data.split(":")[1])
 
     # 🔒 Не можна видаляти себе
@@ -302,8 +283,9 @@ async def cancel_admin_delete(callback: CallbackQuery, state: FSMContext):
 @router.callback_query(IsSuperAdmin(), F.data == "create_post_to_city")
 async def create_post_to_city(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(
-        "🏙 Введіть назву міста для посту:\n"
-        "Чернівці, Чернігів, Івано-Франківськ, Ужгород, Запоріжжя, Київ",
+        f"🏙 Введіть назву міста для посту:\n Бердичів, Дніпро, Житомир, Ізмаїл,"
+                                  "Запоріжжя, Івано-Франківськ, Львів, Кривій Ріг, Кропивницький, Луцьк, Одеса, "
+                                  "Первомайськ, Рівне, Ужгород, Київ, Харків, Чернігів",
         reply_markup=cancel_kb()
     )
     await state.set_state(CreatePostToCity.waiting_for_city)
@@ -415,9 +397,9 @@ async def send_post_to_city(callback: CallbackQuery):
 # --- АКЦІЯ ---
 @router.callback_query(IsSuperAdmin(), F.data == "create_promo_to_city")
 async def create_promo_to_city(callback: CallbackQuery, state: FSMContext):
-    await callback.message.answer(
-        "🏙 Введіть назву міста для акції:\n"
-        "Чернівці, Чернігів, Івано-Франківськ, Ужгород, Запоріжжя, Київ",
+    await callback.message.answer("🏙 Введіть назву міста для акції:\n Бердичів, Дніпро, Житомир, Ізмаїл,"
+                                  "Запоріжжя, Івано-Франківськ, Львів, Кривій Ріг, Кропивницький, Луцьк, Одеса, "
+                                  "Первомайськ, Рівне, Ужгород, Київ, Харків, Чернігів",
         reply_markup=cancel_kb()
     )
     await state.set_state(CreatePromoToCity.waiting_for_city)
