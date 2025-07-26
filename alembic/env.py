@@ -23,6 +23,9 @@ target_metadata = Base.metadata
 # Отримуємо sync-URL для Alembic (НЕ asyncpg)
 DB_URL = os.getenv("ALEMBIC_SYNC_DB_URL")
 
+if not DB_URL:
+    raise ValueError("ALEMBIC_SYNC_DB_URL is not set")
+
 def run_migrations_offline():
     """Запуск офлайн-міграцій (без підключення до БД)"""
     context.configure(
