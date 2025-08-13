@@ -11,6 +11,7 @@ from filters.is_superadmin import IsSuperAdmin
 from keyboard.keyboards import super_admin_menu, generate_post_action_kb, generate_promo_action_kb, cancel_kb
 from states.superadmin_post_promo_states import CreatePostToCity, CreatePromoToCity, EditPromo, EditPost
 from app_config import BOT_TOKEN
+from info import SUPER_ADMIN_IDS
 
 from datetime import datetime
 
@@ -28,15 +29,6 @@ BOTS_CONFIG = [
 
 
 router = Router()
-
-# 🔐 Список дозволених супер-адмінів
-SUPER_ADMIN_IDS = [887934499, 6539889022]
-
-
-# VALID_CITIES = [
-#     "Чернівці", "Чернігів", "Івано-Франківськ",
-#     "Ужгород", "Запоріжжя", "Київ"
-# ]
 
 VALID_CITY_MAP = {city.lower().replace("-", "").replace(" ", ""): city for city in VALID_CITIES}
 

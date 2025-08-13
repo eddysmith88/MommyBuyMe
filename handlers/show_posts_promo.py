@@ -8,6 +8,7 @@ from info import CITIES_LOCATION, VALID_CITIES
 from filters.is_superadmin import IsSuperAdmin
 from keyboard.keyboards import generate_promo_action_kb, cancel_kb, get_posts_pagination_kb, get_pagination_kb
 from states.superadmin_post_promo_states import CreatePostToCity, CreatePromoToCity, EditPromo, EditPost
+from info import SUPER_ADMIN_IDS
 
 
 from datetime import datetime
@@ -16,9 +17,6 @@ import logging
 
 
 router = Router()
-
-
-SUPER_ADMIN_IDS = [887934499, 6539889022,]
 
 
 VALID_CITY_MAP = {city.lower().replace("-", "").replace(" ", ""): city for city in VALID_CITIES}

@@ -2,10 +2,7 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery
 
 from filters.is_admin import IsAdmin
-
-
-SUPER_ADMIN_IDS = [887934499, 6539889022, 498516373, 959706369]
-# SUPER_ADMIN_IDS = [887934499]
+from info import SUPER_ADMIN_IDS
 
 
 router = Router()

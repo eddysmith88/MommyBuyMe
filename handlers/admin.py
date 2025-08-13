@@ -11,13 +11,12 @@ from db.models import Admin, Post, Promo, Client
 from datetime import datetime
 
 from filters.is_admin import IsAdmin
+from info import SUPER_ADMIN_IDS
 from states.post_states import PostCreation, RejectPost, RejectPromoFSM
 from states.admin_states import PromoCreation
 from keyboard.keyboards import send_post_kb, send_promo_kb, cancel_kb, check_post_kb
 from states.superadmin_post_promo_states import RejectPromo
 
-# Список суперадмінів
-SUPER_ADMIN_IDS = [887934499, 6539889022, ]
 
 
 router = Router()

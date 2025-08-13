@@ -7,11 +7,9 @@ from aiogram.filters import CommandStart
 from sqlalchemy import select
 from db.models import Client, Admin, Promo
 from db.session import AsyncSessionLocal
+from info import SUPER_ADMIN_IDS
 
 from keyboard.keyboards import super_admin_menu, city_kb, admin_menu
-# 887934499
-
-SUPER_ADMIN_IDS = [6539889022, 887934499]
 
 
 router = Router()
@@ -50,6 +48,14 @@ async def start_handler(message: Message):
                 ])
                 return await message.answer("🏙 Оберіть ваше місто:", reply_markup=choose_city_kb)
 
+            # 🔐 Якщо клієнт існує, але не має міста
+            if client and not client.city:
+                choose_city_kb = InlineKeyboardMarkup(inline_keyboard=[
+                    [InlineKeyboardButton(text=city, callback_data=f"choose_city:{city}")]
+                    for city in cities
+                ])
+                return await message.answer("🔁 Будь ласка, оберіть місто ще раз.", reply_markup=choose_city_kb)
+
         # Визначення міста (для вітання)
         city_name = (admin.city if is_admin else client.city) if not is_superadmin else "всі міста"
         greeting = f"👋🧚‍♀️ Привіт 🧞‍♂️ {user_name}!\n🧸 Вас вітає 'Мама ну купи' 🧸{city_name}"
@@ -70,20 +76,19 @@ async def start_handler(message: Message):
                 reply_markup=city_kb()
             )
 
-            # Якщо ще немає телефону — просимо його
-            # if client and not client.phone_number:
-            #     phone_kb = ReplyKeyboardMarkup(
-            #         keyboard=[
-            #             [KeyboardButton(text="📱 Надати номер телефону", request_contact=True)],
-            #             [KeyboardButton(text="⏭ Пропустити")]
-            #         ],
-            #         resize_keyboard=True,
-            #         one_time_keyboard=False
-            #     )
-            #     await message.answer(
-            #         "Будь ласка, поділіться номером телефону або натисніть «Пропустити»:",
-            #         reply_markup=phone_kb
-            #     )
+            if client and not client.phone_number:
+                phone_kb = ReplyKeyboardMarkup(
+                    keyboard=[
+                        [KeyboardButton(text="📱 Надати номер телефону", request_contact=True)],
+                        [KeyboardButton(text="⏭ Пропустити")]
+                    ],
+                    resize_keyboard=True,
+                    one_time_keyboard=False
+                )
+                await message.answer(
+                    "Будь ласка, поділіться номером телефону або натисніть «Пропустити»:",
+                    reply_markup=phone_kb
+                )
 
             # Показати всі акції для міста клієнта
             result = await session.execute(
@@ -169,12 +174,15 @@ async def handle_contact(message: Message):
         client = result.scalar_one_or_none()
 
         if client:
-            client.phone = phone
+            client.phone_number = phone
             await session.commit()
 
-    await message.answer("✅ Дякуємо! Ваш номер збережено.", reply_markup=city_kb())
+    await message.answer("✅ Дякуємо! Ваш номер збережено.", reply_markup=ReplyKeyboardRemove())
+    await message.answer("🔽 Меню:", reply_markup=city_kb())
 
 
 @router.message(F.text == "⏭ Пропустити")
 async def skip_phone(message: Message):
-    await message.answer("✅ Реєстрацію завершено без номера.", reply_markup=city_kb())
+    await message.answer("✅ Реєстрацію завершено без номера.", reply_markup=ReplyKeyboardRemove())
+    await message.answer("🔽 Меню:", reply_markup=city_kb())
+
